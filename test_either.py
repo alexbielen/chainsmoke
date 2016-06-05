@@ -11,17 +11,17 @@ bad = EitherError("NOT A NUMBER")
 
 @chainable_either
 def add_2_to_either(either):
-    return either.value + 2
+    return either + 2
 
 
 @chainable_either
 def add_3_to_either(either):
-    return either.value + 3
+    return either + 3
 
 
 @chainable_either
 def add_4_to_either(either):
-    return either.value + 4
+    return either + 4
 
 
 def test_that_call_chain_returns_15_when_value_is_good():

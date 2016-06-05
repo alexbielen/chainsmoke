@@ -38,7 +38,7 @@ def chainable_either(func):
         if isinstance(either, EitherError):
             return EitherError(either.value)
         else:
-            return EitherGood(func(either))
+            return EitherGood(func(either.value))
 
     return check_type_of_either
 
