@@ -2,10 +2,7 @@
 Tests for the common library functions.
 """
 
-from either import EitherError, EitherGood, chainable_either, call_chain
-
-
-good = EitherGood(6)
+from either import chainable_either, call_chain
 
 @chainable_either
 def add_2_to_either(either):
@@ -23,7 +20,7 @@ def add_4_to_either(either):
 
 
 def test_that_call_chain_returns_15_when_value_is_good():
-    result = call_chain(add_2_to_either(good), add_3_to_either, add_4_to_either)
+    result = call_chain(add_2_to_either(6), add_3_to_either, add_4_to_either)
     assert result.value == 15
 
 
