@@ -25,9 +25,14 @@ def log_it(logger, input_string=None, output_string=None):
             else:
                 output_log_string = "{func_name} returned result {result}"
 
-            logger(input_log_string.format( func_name=function.__name__, args=args, kwargs=kwargs))
+            try:
+                function_name = function.__name__
+            except AttributeError:
+                function_name = 'unknown function name; probably a lambda or partially applied function...'
+
+            logger(input_log_string.format( func_name=function_name, args=args, kwargs=kwargs))
             result = function(*args, **kwargs)
-            logger(output_log_string.format(func_name=function.__name__, result=result))
+            logger(output_log_string.format(func_name=function_name, result=result))
             return result
 
         return wrapper

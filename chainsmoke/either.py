@@ -8,7 +8,6 @@ class _Either(object):
     """
     Either allows you to chain computations that have either a Good status or an Error status.
     """
-
     def __init__(self, value):
         self.value = value
 
