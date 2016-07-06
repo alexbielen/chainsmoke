@@ -22,8 +22,6 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 from collections import namedtuple
 
-Result = namedtuple('Result', ['value', 'path'])
-
 
 class Decision(object):
     def __init__(self, name, predicate, false_next, true_next):
@@ -46,6 +44,9 @@ class Decision(object):
         return result.next(data, path=path)
 
 
+Result = namedtuple('Result', ['value', 'path'])
+
+
 class Action(object):
     def __init__(self, name, action):
         self.name = name
@@ -57,5 +58,23 @@ class Action(object):
 
 
 do_nothing = Action('do nothing', lambda x: None)
+
+D = namedtuple('D', ['name', 'predicate'])
+A = namedtuple('A', ['name', 'action'])
+
+tree = (
+    D('greater than two', lambda x: x > 2), (
+        (D('greater than zero', lambda x: x > 0), (
+            A('return number', lambda x: x),
+            A('add two'), lambda x: x + 2)
+         ),
+        A('add 400', lambda x: x + 400)
+    )
+)
+
+
+def build_tree(tree):
+    pass
+
 
 
