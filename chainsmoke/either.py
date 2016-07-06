@@ -13,14 +13,14 @@ class _Either(object):
         self.value = value
 
 
-class EitherGood(_Either):
+class Good(_Either):
     """
     Use for cases where everything went OK.
     """
     pass
 
 
-class EitherError(_Either):
+class Error(_Either):
     """
     Use for cases where there is an error.
     """
@@ -29,32 +29,21 @@ class EitherError(_Either):
 
 def chainable_either(func):
     """
-    Decorator to make
-    :param func:
-    :return:
     """
 
     def check_type_of_either(either):
-        if isinstance(either, EitherError):
-            return EitherError(either.value)
+        if isinstance(either, Error):
+            return Error(either.value)
         else:
-            if not isinstance(either, EitherGood):
+            if not isinstance(either, Good):
                 value = either
             else:
                 value = either.value
             try:
-		return EitherGood(func(value))
+                return Good(func(value))
             except Exception as e:
-                return EitherError(e)
+                return Error(e)
 
     return check_type_of_either
 
 
-def call_chain(*args):
-    """
-    Calls a chain of functions.
-    :param args: functions you want called in a chain
-    :return: result
-    """
-    result = reduce((lambda x, y: y(x)), args)
-    return result

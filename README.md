@@ -1,8 +1,10 @@
-# Either.py
+# Chainsmoke
 
-Either.py is a simple library for chaining functions that can return either Good or Error outputs. 
+Chainsmoke is a collection of abstractions for chains of functions that strives to be simple, practical and well-documented.
 
 Look below for an overly-didactic example:
+
+## Either
 
 ```python
 from either import chainable_either, call_chain

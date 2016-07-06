@@ -2,7 +2,9 @@
 Tests for the common library functions.
 """
 
-from either import chainable_either, call_chain
+from chainsmoke.either import chainable_either
+from chainsmoke import chain
+
 
 @chainable_either
 def add_2_to_either(either):
@@ -20,10 +22,15 @@ def add_4_to_either(either):
 
 
 def test_that_call_chain_returns_15_when_value_is_good():
-    result = call_chain(add_2_to_either(6), add_3_to_either, add_4_to_either)
+    func_chain = [
+        add_2_to_either(6),
+        add_3_to_either,
+        add_4_to_either
+    ]
+    result = chain(*func_chain)
     assert result.value == 15
 
 
 def test_that_call_chain_returns_not_a_number_when_value_is_error():
-    result = call_chain(add_2_to_either("abc"), add_3_to_either, add_4_to_either)
+    result = chain(add_2_to_either("abc"), add_3_to_either, add_4_to_either)
     assert isinstance(result.value, TypeError)
