@@ -2,6 +2,8 @@
 
 Types and utilities for working with binary decision trees.
 
+Adapted from Chanan Zupnick's decisionTree.js
+
 Copyright (C) 2016  Alex Hendrie Bielen
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -52,3 +54,8 @@ class Action(object):
     def next(self, data, path):
         result = self.action(data)
         return Result(value=result, path=path + self.name)
+
+
+do_nothing = Action('do nothing', lambda x: None)
+
+
