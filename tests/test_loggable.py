@@ -20,7 +20,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 from unittest.mock import MagicMock, call
 from functools import partial
 
-from chainsmoke.loggable import log_it
+from chainsmoke.log import log_it
 from chainsmoke import chain
 
 

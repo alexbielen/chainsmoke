@@ -28,7 +28,7 @@ def log_it(logger, input_string=None, output_string=None):
     :param output_string: An optional interpolated stirng for logging the output; needs to have {func_name} and
                           {result} in the string.
     """
-    def real_decorator(function):
+    def decorator(function):
         def wrapper(*args, **kwargs):
             if input_string:
                 input_log_string = input_string
@@ -52,4 +52,6 @@ def log_it(logger, input_string=None, output_string=None):
 
         return wrapper
 
-    return real_decorator
+    return decorator
+
+

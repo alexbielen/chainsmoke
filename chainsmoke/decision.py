@@ -1,5 +1,8 @@
 """
-Tests for the common library functions.
+
+Types and utilities for working with binary decision trees.
+
+Copyright (C) 2016  Alex Hendrie Bielen
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -15,39 +18,37 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
-from chainsmoke.railroad import railroad_it
-from chainsmoke import chain, chain_as_func
+from collections import namedtuple
+
+Result = namedtuple('Result', ['value', 'path'])
 
 
-@railroad_it
-def add_2_to_either(either):
-    return either + 2
+class Decision(object):
+    def __init__(self, name, predicate, false_next, true_next):
+        self.name = name
+        self.predicate = predicate
+        self.false_next = false_next
+        self.true_next = true_next
+
+    def next(self, data, path=''):
+        if not path:
+            path = self.name + " -> "
+        else:
+            path = path + self.name + " -> "
+
+        if self.predicate(data):
+            result = self.true_next
+        else:
+            result = self.false_next
+
+        return result.next(data, path=path)
 
 
-@railroad_it
-def add_3_to_either(either):
-    return either + 3
+class Action(object):
+    def __init__(self, name, action):
+        self.name = name
+        self.action = action
 
-
-@railroad_it
-def add_4_to_either(either):
-    return either + 4
-
-
-def test_that_call_chain_returns_15_when_value_is_good():
-    func_chain = [
-        add_3_to_either,
-        add_4_to_either
-    ]
-    result = chain_as_func(*func_chain)(add_2_to_either(6))
-    assert result.value == 15
-
-
-def test_that_call_chain_returns_not_a_number_when_value_is_error():
-    func_chain = [
-        add_2_to_either("abc"),
-        add_3_to_either,
-        add_4_to_either
-    ]
-    result = chain(*func_chain)
-    assert isinstance(result.value, TypeError)
+    def next(self, data, path):
+        result = self.action(data)
+        return Result(value=result, path=path + self.name)

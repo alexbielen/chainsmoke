@@ -1,5 +1,6 @@
 """
-Monads for error handling.
+
+
 
 Copyright (C) 2016  Alex Hendrie Bielen
 
@@ -41,8 +42,10 @@ class Error(_Either):
     pass
 
 
-def chainable_either(func):
+def railroad_it(func):
     """
+    Creates a railroadable type (Either, Maybe).
+
     """
 
     def check_type_of_either(either):
