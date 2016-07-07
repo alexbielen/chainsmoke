@@ -73,8 +73,3 @@ tree = (
 )
 
 
-def build_tree(tree):
-    pass
-
-
-

@@ -69,7 +69,7 @@ def chain_as_func(*args, **kwargs):
     wrapping_func = kwargs.get('wrap_with')
 
     if wrapping_func:
-        args = list(wrap_funcs(wrapping_func, args))
+        args = tuple(wrap_funcs(wrapping_func, args))
 
     def inner(value):
         result = reduce((lambda x, y: y(x)), (value,) + args)
