@@ -1,5 +1,9 @@
 """
-Tests for the common library functions.
+Types and utilities for working with binary decision trees.
+
+Adapted from Chanan Zupnick's decisionTree.js
+
+Copyright (C) 2016  Alex Hendrie Bielen
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -15,39 +19,36 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
-from chainsmoke.railroad import railroad_it
-from chainsmoke.chain import chain, chain_as_func
+
+def swap(func):
+    """
+    Swaps the arguments to a function.
+    :param func: A 2-arity function
+    :return: A 2-arity function with swapped parameters.
+    """
+    def inner(x, y):
+        return func(y, x)
+
+    return inner
 
 
-@railroad_it
-def add_2_to_either(either):
-    return either + 2
+def reorder(func, reorded_args: tuple):
+    """
+    Reorders arguments to a function according to tuple of integers
+    :param func: function of n-arity
+    :param reorded_args: a tuple of unique integers
+    :return: function of n-arity with reordered args
+    """
+    def inner(*args, **kwargs):
+        new_args = []
+        for arg_num in reorded_args:
+            new_args.append(args[arg_num])
+
+        return func(*tuple(new_args), **kwargs)
+
+    return inner
 
 
-@railroad_it
-def add_3_to_either(either):
-    return either + 3
 
 
-@railroad_it
-def add_4_to_either(either):
-    return either + 4
 
-
-def test_that_call_chain_returns_15_when_value_is_good():
-    func_chain = [
-        add_3_to_either,
-        add_4_to_either
-    ]
-    result = chain_as_func(*func_chain)(add_2_to_either(6))
-    assert result.value == 15
-
-
-def test_that_call_chain_returns_not_a_number_when_value_is_error():
-    func_chain = [
-        add_2_to_either("abc"),
-        add_3_to_either,
-        add_4_to_either
-    ]
-    result = chain(*func_chain)
-    assert isinstance(result.value, TypeError)

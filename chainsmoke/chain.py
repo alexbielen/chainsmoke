@@ -56,7 +56,7 @@ def chain(*args, **kwargs):
     return result
 
 
-def chain_as_func(*args, **kwargs):
+def compose(*args, **kwargs):
     """
     Returns function representing a chain of functions that is ready to be called with
     a value.

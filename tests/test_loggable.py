@@ -21,7 +21,7 @@ from unittest.mock import MagicMock, call
 from functools import partial
 
 from chainsmoke.log import log_it
-from chainsmoke.util import chain
+from chainsmoke.chain import chain
 
 
 # some very simple functions

@@ -27,6 +27,9 @@ We want to add some debug logging, but we've unfortunately created some noise th
 Here's a quick fix from Chainsmoke.log:
 
 ```python
+import logging
+from chainsmoke.log import log_it
+
 @log_it(logging.debug)
 def add_two_numbers(x, y):
     return x + y
@@ -50,7 +53,77 @@ Output logging:
 ```python
 "valid_email returned result 7"
 ```
-So, now we have an addition function that logs its inputs and outputs. Cool, but not that cool. What's next?
+So, now we have an function `add_two_numbers` that logs its inputs and outputs. Cool, but not that cool. What's next?
+
+##Chain
+
+Let's set up our first chain of functions.
+
+```python
+from chainsmoke.chain import chain
+
+
+def add_two(x):
+    return x + 2
+
+
+def multiply_by_two(x):
+    return x * 2
+
+
+def divide_by_two(x):
+    return x / 2
+
+
+result = chain(
+    5,
+    add_two,
+    multiply_by_two,
+    divide_by_two
+)
+# result: 7.0
+```
+
+The `chain` function allows you to easily pass the result of one function to the next function. The first argument to chain
+will be treated like a value, much like how `5` is in this example.
+
+All of the functions in the chain must have an arity of one; put another way the functions in the chain must have exactly
+one argument. In the real world you'll often have functions with more than one argument so when using Chainsmoke you'll find
+`functools.partial` comes in handy. Here's the same example using more general functions and `functools.partial`:
+
+```python
+from chainsmoke.chain import chain
+from functools import partial
+
+
+def addition(x, y):
+    return x + y
+
+def multiplication(x, y):
+    return x * y
+
+def division(x, y): # not used...
+    return x // y
+
+add_two = partial(addition, 2)
+multiply_by_two = partial(multiplication, 2)
+divide_by_two = partial(multiplication, .5)
+
+result = chain(
+    5,
+    add_two,
+    multiply_by_two,
+    divide_by_two
+)
+```
+As you can see, `functools.partial` allows you to 'bake-in' a parameter to a function; this is referred to as
+'parital application' or 'currying'. Notice how we had to implement `divide_by_two` as multiplication by .5?
+That's due to the behavior of `functools.partial` specifically that it replaces the arguments in order.
+This means that because division is not associative you can't curry the function and get the same behavior.
+
+There are two utilities in Chainsmoke that offer a solution to this problem; `swap` and `reorder`.
+
+
 
 
 
