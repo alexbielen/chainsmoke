@@ -32,16 +32,16 @@ def swap(func):
     return inner
 
 
-def reorder(func, reorded_args: tuple):
+def reorder(func, reordered_args: tuple):
     """
     Reorders arguments to a function according to tuple of integers
     :param func: function of n-arity
-    :param reorded_args: a tuple of unique integers
+    :param reordered_args: a tuple of unique integers
     :return: function of n-arity with reordered args
     """
     def inner(*args, **kwargs):
         new_args = []
-        for arg_num in reorded_args:
+        for arg_num in reordered_args:
             new_args.append(args[arg_num])
 
         return func(*tuple(new_args), **kwargs)
