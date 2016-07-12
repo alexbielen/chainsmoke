@@ -1,4 +1,9 @@
 language: python
 python:
   - "3.5"
-script: py.test tests
+# command to install dependencies
+install:
+  - pip install .
+  - pip install pytest==2.9.2
+script:
+  - python setup.py test
