@@ -16,7 +16,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 """
 
 from chainsmoke.railroad import railroad_it
-from chainsmoke.chain import chain, chain_as_func
+from chainsmoke.chain import chain, compose
 
 
 @railroad_it
@@ -39,7 +39,7 @@ def test_that_call_chain_returns_15_when_value_is_good():
         add_3_to_either,
         add_4_to_either
     ]
-    result = chain_as_func(*func_chain)(add_2_to_either(6))
+    result = compose(*func_chain)(add_2_to_either(6))
     assert result.value == 15
 
 
