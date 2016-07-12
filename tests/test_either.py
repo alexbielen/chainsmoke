@@ -16,7 +16,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 """
 
 from chainsmoke.railroad import railroad_it
-from chainsmoke import chain, chain_as_func
+from chainsmoke.util import chain, chain_as_func
 
 
 @railroad_it

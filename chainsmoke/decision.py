@@ -1,5 +1,4 @@
 """
-
 Types and utilities for working with binary decision trees.
 
 Adapted from Chanan Zupnick's decisionTree.js
@@ -56,20 +55,5 @@ class Action(object):
         result = self.action(data)
         return Result(value=result, path=path + self.name)
 
-
-do_nothing = Action('do nothing', lambda x: None)
-
-D = namedtuple('D', ['name', 'predicate'])
-A = namedtuple('A', ['name', 'action'])
-
-tree = (
-    D('greater than two', lambda x: x > 2), (
-        (D('greater than zero', lambda x: x > 0), (
-            A('return number', lambda x: x),
-            A('add two'), lambda x: x + 2)
-         ),
-        A('add 400', lambda x: x + 400)
-    )
-)
 
 

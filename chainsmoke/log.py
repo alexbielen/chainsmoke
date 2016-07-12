@@ -17,10 +17,6 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
-from chainsmoke import chain
-from functools import partial
-
-
 def log_it(logger, input_string=None, output_string=None):
     """
     Wraps a function in a logger.
