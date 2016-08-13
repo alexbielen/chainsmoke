@@ -51,7 +51,7 @@ Input logging:
 
 Output logging:
 ```python
-"valid_email returned result 7"
+"add_two_numbers returned result 7"
 ```
 So, now we have an function `add_two_numbers` that logs its inputs and outputs. Cool, but not that cool. What's next?
 
@@ -117,11 +117,13 @@ result = chain(
 )
 ```
 As you can see, `functools.partial` allows you to 'bake-in' a parameter to a function; this is referred to as
-'parital application' or 'currying'. Notice how we had to implement `divide_by_two` as multiplication by .5?
-That's due to the behavior of `functools.partial` specifically that it replaces the arguments in order.
+'partial application' or 'currying'. Notice how we had to implement `divide_by_two` as multiplication by .5?
+That's due to the behavior of `functools.partial` -- specifically that it replaces the arguments in order.
 This means that because division is not associative you can't curry the function and get the same behavior.
 
 There are two utilities in Chainsmoke that offer a solution to this problem; `swap` and `reorder`.
+
+
 
 
 

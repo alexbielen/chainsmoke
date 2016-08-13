@@ -40,7 +40,7 @@ add_two.__name__ = 'add_two'
 multiply_by_two = partial(simple_multiplication, 2)
 
 
-def test_that_log_it_logs_inputi_and_output_correctly():
+def test_that_log_it_logs_input_and_output_correctly():
     mock_logger = MagicMock()
     result = chain(
         5,
