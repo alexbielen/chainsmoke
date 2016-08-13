@@ -1,7 +1,5 @@
 """
-Types and utilities for working with binary decision trees.
-
-Adapted from Chanan Zupnick's decisionTree.js
+Utilities for manipulating functions.
 
 Copyright (C) 2016  Alex Hendrie Bielen
 
@@ -26,6 +24,17 @@ def swap(func):
     :param func: A 2-arity function
     :return: A 2-arity function with swapped parameters.
     """
+    num_args = len(func.__code__.co_varnames)
+
+    if num_args != 2:
+        try:
+            name = func.__name__
+        except AttributeError:
+            name = 'anonymous function '
+
+        raise AssertionError("swap expects a two argument function; {name} has {len} argument(s)".format(name=name,
+                                                                                                         len=num_args))
+
     def inner(x, y):
         return func(y, x)
 
@@ -39,6 +48,7 @@ def reorder(func, reorded_args: tuple):
     :param reorded_args: a tuple of unique integers
     :return: function of n-arity with reordered args
     """
+
     def inner(*args, **kwargs):
         new_args = []
         for arg_num in reorded_args:
@@ -47,8 +57,3 @@ def reorder(func, reorded_args: tuple):
         return func(*tuple(new_args), **kwargs)
 
     return inner
-
-
-
-
-
