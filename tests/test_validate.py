@@ -18,16 +18,42 @@ OTHER DEALINGS IN THE SOFTWARE.
 """
 import pytest
 
-from chainsmoke.validate import validate_it
+from chainsmoke.validate import validate_it, ChainSmokeValidationError
 
 
 def test_that_validate_it_raises_exception_if_types_are_incorrect():
     with pytest.raises(TypeError) as exception_info:
         @validate_it
-        def add_two(x: int, y: int) -> int:
+        def add_two_numbers(x: int, y: int) -> int:
             return x + y
 
-        add_two(2, 'A')
+        add_two_numbers(2, 'A')
 
     assert exception_info.value.args[
-               0] == "add_two expects type <class 'int'> for arg y but received value A with type of <class 'str'>"
+               0] == "add_two_numbers expects type <class 'int'> for arg y " \
+                     "but received value A with type of <class 'str'>"
+
+
+def test_that_validate_it_works_with_keyword_arguments():
+    @validate_it
+    def add_two(x: int, y: int = 'A') -> int:
+        return x + y
+
+    with pytest.raises(TypeError) as exception_info:
+        add_two(4, y='B')
+
+    assert exception_info.value.args[
+               0] == "add_two expects type <class 'int'> for arg y but received value B with type of <class 'str'>"
+
+
+def test_that_validate_it_does_not_work_when_using_a_default_keyword_arg():
+    @validate_it
+    def add_two(x: int, y: int = 'A') -> int:
+        return x + y
+
+    with pytest.raises(ChainSmokeValidationError) as exception_info:
+        add_two(2)
+
+    assert exception_info.value.args[
+               0] == 'add_two cannot be properly validated by Chainsmoke. ' \
+                     'This is likely because it is using a default keyword argument.'

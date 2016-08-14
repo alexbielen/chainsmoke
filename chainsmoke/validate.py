@@ -19,6 +19,10 @@ OTHER DEALINGS IN THE SOFTWARE.
 """
 
 
+class ChainSmokeValidationError(Exception):
+    pass
+
+
 def validate_it(func):
     """
     Validate that the parameters have the correct types according to the type annotations.
@@ -28,16 +32,29 @@ def validate_it(func):
     """
     types = func.__annotations__
     param_names = func.__code__.co_varnames
+    func_name = func.__name__
 
-    # :todo make this work for kwargs as well
     def inner(*args, **kwargs):
-        names_and_values = zip(param_names, args)
+        if not kwargs and len(args) != len(param_names):
+            raise ChainSmokeValidationError(
+                "{func_name} cannot be properly validated by Chainsmoke. "
+                "This is likely because it is using a default keyword argument.".format(func_name=func_name))
+
+        if not kwargs:
+            names_and_values = zip(param_names, args)
+        else:
+            keyword_args = []
+            for name in param_names:
+                val = kwargs.get(name)
+                if val:
+                    keyword_args.append(val)
+
+            names_and_values = zip(param_names, args + tuple(keyword_args))
 
         for name, value in names_and_values:
             t = types[name]
             if not isinstance(value, t):
                 bad_type = type(value)
-                func_name = func.__name__
                 error_string = "{func_name} expects type {expected_type} for arg {arg_name} " \
                                "but received value {value} with type of {value_type}"
                 error_string = error_string.format(func_name=func_name,
