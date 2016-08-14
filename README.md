@@ -129,11 +129,41 @@ There are two utilities in Chainsmoke that offer a solution to this problem; `sw
 from chainsmoke.functools import swap
 
 def division(x, y):
-    return x / y
+    return x // y
     
 swapped_division = swap(division)
 
 swapped_division(2, 4) # 2
+```
+
+Let's use swap to use the division function on the same chain of simple arithmetic 
+functions: 
+
+```python
+from functools import partial
+
+from chainsmoke.chain import chain
+from chainsmoke.functools import swap
+
+def addition(x, y):
+    return x + y
+
+def multiplication(x, y):
+    return x * y
+
+def division(x, y):
+    return x // y
+
+add_two = partial(addition, 2)
+multiply_by_two = partial(multiplication, 2)
+divide_by_two = partial(swap(division), 2)
+
+result = chain(
+    5,
+    add_two,
+    multiply_by_two,
+    divide_by_two
+)
 ```
 
 
