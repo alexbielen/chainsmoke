@@ -123,6 +123,21 @@ This means that because division is not associative you can't curry the function
 
 There are two utilities in Chainsmoke that offer a solution to this problem; `swap` and `reorder`.
 
+`swap` is a simple function that swaps the order of the arguments. 
+
+```python
+from chainsmoke.functools import swap
+
+def division(x, y):
+    return x / y
+    
+swapped_division = swap(division)
+
+swapped_division(2, 4) # 2
+```
+
+
+
 
 
 
