@@ -1,5 +1,5 @@
 """
-Unit tests for functools.py
+Unit tests for validate.py
 
 Copyright (C) 2016  Alex Hendrie Bielen
 
@@ -18,33 +18,17 @@ OTHER DEALINGS IN THE SOFTWARE.
 """
 import pytest
 
-from chainsmoke.functools import swap, reorder
+from chainsmoke.validate import validate_it
 
 
-def test_that_swap_correctly_swaps_arguments():
-    def divide_two_numbers(x, y):
-        return x / y
+def test_that_validate_it_raises_exception_if_types_are_incorrect():
 
-    swapped_divide = swap(divide_two_numbers)
-    assert swapped_divide(2, 4) == 2
-
-
-def test_that_swap_raises_useful_exception_when_passed_wrong_number_of_arguments():
-    def add_three(x, y, z):
-        return x + y + z
-
-    with pytest.raises(AssertionError) as exception_info:
-        swap(add_three)
-
-    assert exception_info.value.msg == "swap expects a two argument function; add_three has 3 argument(s)"
+    @validate_it
+    def add_two(x: int, y: int) -> int:
+        return x + y
 
 
-def test_that_swap_raises_useful_exception_when_passed_lambda_with_wrong_number_of_args():
-    with pytest.raises(AssertionError) as exception_info:
-        swap(lambda x: x * x)
-
-    assert exception_info.value.msg == "swap expects a two argument function; <lambda> has 1 argument(s)"
+    add_two(2, 'A')
 
 
-def test_that_reorder_correctly_reorders_arguments():
-    pass
+
