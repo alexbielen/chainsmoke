@@ -1,5 +1,5 @@
 # Chainsmoke
-[![Build Status](https://travis-ci.org/bielenah/chainsmoke.svg?branch=master)](https://travis-ci.org/bielenah/chainsmoke)
+[![Build Status](https://travis-ci.org/bielenah/chainsmoke.svg?branch=master)](https://travis-ci.org/alexbielen/chainsmoke)
 
 
 Chainsmoke is a collection of tools for chains of functions. It strives to be simple, practical and well-documented.
