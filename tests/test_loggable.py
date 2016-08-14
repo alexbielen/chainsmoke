@@ -28,6 +28,7 @@ from chainsmoke.chain import chain
 def simple_addition(x, y):
     return x + y
 
+
 def simple_multiplication(x, y):
     return x * y
 

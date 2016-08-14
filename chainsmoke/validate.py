@@ -40,14 +40,13 @@ def validate_it(func):
                 func_name = func.__name__
                 error_string = "{func_name} expects type {expected_type} for arg {arg_name} " \
                                "but received value {value} with type of {value_type}"
-                error_string.format(func_name=func_name,
-                                    expected_type=t,
-                                    arg_name=name,
-                                    value=value,
-                                    value_type=bad_type)
+                error_string = error_string.format(func_name=func_name,
+                                                   expected_type=t,
+                                                   arg_name=name,
+                                                   value=value,
+                                                   value_type=bad_type)
                 raise TypeError(error_string)
 
         return func(args, kwargs)
 
     return inner
-

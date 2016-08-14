@@ -30,7 +30,7 @@ def swap(func):
         try:
             name = func.__name__
         except AttributeError:
-            name = 'anonymous function '
+            name = 'anonymous function'
 
         raise AssertionError("swap expects a two argument function; {name} has {len} argument(s)".format(name=name,
                                                                                                          len=num_args))

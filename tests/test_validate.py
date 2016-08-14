@@ -22,13 +22,12 @@ from chainsmoke.validate import validate_it
 
 
 def test_that_validate_it_raises_exception_if_types_are_incorrect():
+    with pytest.raises(TypeError) as exception_info:
+        @validate_it
+        def add_two(x: int, y: int) -> int:
+            return x + y
 
-    @validate_it
-    def add_two(x: int, y: int) -> int:
-        return x + y
+        add_two(2, 'A')
 
-
-    add_two(2, 'A')
-
-
-
+    assert exception_info.value.args[
+               0] == "add_two expects type <class 'int'> for arg y but received value A with type of <class 'str'>"
