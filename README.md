@@ -135,8 +135,7 @@ swapped_division = swap(division)
 swapped_division(2, 4) # 2
 ```
 
-Let's use swap to use the division function on the same chain of simple arithmetic 
-functions: 
+Let's use swap on the division function in the same chain of simple arithmetic functions from before:
 
 ```python
 from functools import partial
@@ -164,6 +163,81 @@ result = chain(
     divide_by_two
 )
 ```
+## wrap_with
+
+`chain` has a keyword argument `wrap_with` that takes a decorator function and applies it to all of the functions in the
+ chain.
+
+ So instead of writing this...
+
+```python
+from functools import partial
+
+from chainsmoke.chain import chain
+from chainsmoke.functools import swap
+from chainsmoke.log import log_it
+
+
+@log_it(print)
+def addition(x, y):
+    return x + y
+
+@log_it(print)
+def multiplication(x, y):
+    return x * y
+
+@log_it(print)
+def division(x, y):
+    return x // y
+
+add_two = partial(addition, 2)
+multiply_by_two = partial(multiplication, 2)
+divide_by_two = partial(swap(division), 2)
+
+result = chain(
+    5,
+    add_two,
+    multiply_by_two,
+    divide_by_two
+)
+```
+... you can write this ...
+
+```python
+from functools import partial
+
+from chainsmoke.chain import chain
+from chainsmoke.functools import swap
+from chainsmoke.log import log_it
+
+
+def addition(x, y):
+    return x + y
+
+def multiplication(x, y):
+    return x * y
+
+def division(x, y):
+    return x // y
+
+add_two = partial(addition, 2)
+multiply_by_two = partial(multiplication, 2)
+divide_by_two = partial(swap(division), 2)
+
+result = chain(
+    5,
+    add_two,
+    multiply_by_two,
+    divide_by_two,
+    wrap_with=log_it(print)
+
+)
+```
+
+
+
+
+
 
 
 
