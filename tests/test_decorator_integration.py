@@ -18,6 +18,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 """
 from unittest.mock import MagicMock, call
 
+from chainsmoke.chain import combine
 from chainsmoke.log import log_it
 from chainsmoke.validate import validate_it
 
@@ -25,18 +26,21 @@ from chainsmoke.validate import validate_it
 def test_that_validate_and_log_work_together():
     mock_logger = MagicMock()
 
-    @log_it(mock_logger, name='add_three')
+    @log_it(mock_logger)
     @validate_it
     def add_three(x: int, y: int, z: int) -> int:
         return x + y + z
 
     add_three(1, 2, 3)
-
-
     mock_logger.assert_has_calls(
         [
-            call('add_three called with args: (1, 2, 3) and kwargs {}'),
+            call('inner called with args: (1, 2, 3) and kwargs {}'),
         ])
+
+
+
+
+
 
 
 

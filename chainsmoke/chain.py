@@ -17,7 +17,8 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OTHER DEALINGS IN THE SOFTWARE.
 
 """
-from functools import reduce
+from functools import reduce, partial
+from collections import namedtuple
 from typing import Callable
 
 
@@ -78,4 +79,33 @@ def compose(*args, **kwargs):
     return inner
 
 
+def combine(*args: Callable) -> Callable:
+    """
+    Combines and integrates decorator functions into a single function.
 
+    1) The decorators in Chainsmoke are order-dependent. This function
+    helps to abstract that order by ordering the desired decorators
+    instead of having the user remember the order.
+
+    2) Some decorators will lose functionality when used in combination. This
+    function adds that functionality back by passing attributes of the original
+    function into the decorators.
+
+    :param args: Any number of chainsmoke decorator functions
+    :return: A single decorator function with the functionality of the combined decorators
+    """
+    order = {
+        'validate_it': 0,
+        'log_it_decorator': 1
+    }
+    sorted_decorators = sorted(args, key=lambda x: order[x.__name__])
+
+    def decorator(func):
+        name = func.__name__
+
+        def inner(*args, **kwargs):
+            return func(*args, **kwargs)
+
+        return inner
+
+    return decorator

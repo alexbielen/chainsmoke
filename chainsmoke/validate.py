@@ -27,8 +27,9 @@ def validate_it(func):
     """
     Validate that the parameters have the correct types according to the type annotations.
 
-    :param func:
-    :return:
+    :param func: function to be decorated
+    :param __meta: the original meta data about the original function; only used by the integration module
+    :return: decorated function
     """
     types = func.__annotations__
     param_names = func.__code__.co_varnames
