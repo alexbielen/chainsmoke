@@ -35,10 +35,13 @@ def validate_it(func):
     func_name = func.__name__
 
     def inner(*args, **kwargs):
+        if not types:
+            raise ChainSmokeValidationError("{func_name} does not have type annotations".format(func_name=func_name))
+
         if not kwargs and len(args) != len(param_names):
             raise ChainSmokeValidationError(
                 "{func_name} cannot be properly validated by Chainsmoke. "
-                "This is likely because it is using a default keyword argument.".format(func_name=func_name))
+                "This is likely because it is using a default keyword argument".format(func_name=func_name))
 
         if not kwargs:
             names_and_values = zip(param_names, args)
@@ -64,6 +67,6 @@ def validate_it(func):
                                                    value_type=bad_type)
                 raise TypeError(error_string)
 
-        return func(args, kwargs)
+        return func(*args, **kwargs)
 
     return inner

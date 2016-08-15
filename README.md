@@ -230,7 +230,6 @@ result = chain(
     multiply_by_two,
     divide_by_two,
     wrap_with=log_it(print)
-
 )
 ```
 

@@ -56,4 +56,15 @@ def test_that_validate_it_does_not_work_when_using_a_default_keyword_arg():
 
     assert exception_info.value.args[
                0] == 'add_two cannot be properly validated by Chainsmoke. ' \
-                     'This is likely because it is using a default keyword argument.'
+                     'This is likely because it is using a default keyword argument'
+
+
+def test_that_validate_it_raises_an_exception_when_function_does_not_have_type_annotations():
+    @validate_it
+    def add_two(x, y):
+        return x + y
+
+    with pytest.raises(ChainSmokeValidationError) as exception_info:
+        add_two(2, 6)
+
+    assert exception_info.value.args[0] == 'add_two does not have type annotations'

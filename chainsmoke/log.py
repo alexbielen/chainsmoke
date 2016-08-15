@@ -17,7 +17,7 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
-def log_it(logger, input_string=None, output_string=None):
+def log_it(logger, name=None, input_string=None, output_string=None):
     """
     Wraps a function in a logger.
 
@@ -39,10 +39,14 @@ def log_it(logger, input_string=None, output_string=None):
             else:
                 output_log_string = "{func_name} returned result {result}"
 
-            try:
-                function_name = function.__name__
-            except AttributeError:
-                function_name = 'unknown function name; probably a lambda or partially applied function...'
+            if not name:
+                try:
+                    function_name = function.__name__
+                except AttributeError:
+                    function_name = 'unknown function name; probably a lambda or partially applied function...'
+
+            else:
+                function_name = name
 
             logger(input_log_string.format( func_name=function_name, args=args, kwargs=kwargs))
             result = function(*args, **kwargs)
