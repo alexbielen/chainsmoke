@@ -72,11 +72,11 @@ def compose(*args, **kwargs):
     if wrapping_func:
         args = tuple(wrap_funcs(wrapping_func, args))
 
-    def inner(value):
+    def compose_inner(value):
         result = reduce((lambda x, y: y(x)), (value,) + args)
         return result
 
-    return inner
+    return compose_inner
 
 
 def combine(*args: Callable) -> Callable:
@@ -101,10 +101,16 @@ def combine(*args: Callable) -> Callable:
     sorted_decorators = sorted(args, key=lambda x: order[x.__name__])
 
     def decorator(func):
-        name = func.__name__
-
         def inner(*args, **kwargs):
             return func(*args, **kwargs)
+
+        inner.__name__ = func.__name__
+        inner.__annotations__ = func.__annotations__
+        inner.overridden_varnames = func.__code__.co_varnames
+
+        for dec in sorted_decorators:
+            inner = dec(inner)
+            inner.__name__ = func.__name__
 
         return inner
 

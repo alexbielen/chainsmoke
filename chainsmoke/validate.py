@@ -32,10 +32,15 @@ def validate_it(func):
     :return: decorated function
     """
     types = func.__annotations__
-    param_names = func.__code__.co_varnames
     func_name = func.__name__
 
-    def inner(*args, **kwargs):
+    # since varnames is read-only we sometimes have to use a different attribute
+    try:
+        param_names = func.overridden_varnames
+    except AttributeError:
+        param_names = func.__code__.co_varnames
+
+    def validate_inner(*args, **kwargs):
         if not types:
             raise ChainSmokeValidationError("{func_name} does not have type annotations".format(func_name=func_name))
 
@@ -57,6 +62,7 @@ def validate_it(func):
 
         for name, value in names_and_values:
             t = types[name]
+
             if not isinstance(value, t):
                 bad_type = type(value)
                 error_string = "{func_name} expects type {expected_type} for arg {arg_name} " \
@@ -70,4 +76,4 @@ def validate_it(func):
 
         return func(*args, **kwargs)
 
-    return inner
+    return validate_inner
