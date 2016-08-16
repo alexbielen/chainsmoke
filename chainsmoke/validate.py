@@ -74,6 +74,19 @@ def validate_it(func):
                                                    value_type=bad_type)
                 raise TypeError(error_string)
 
-        return func(*args, **kwargs)
+        # check the type of the return as well
+        return_type = types['return']
+        result = func(*args, **kwargs)
+
+        if not isinstance(result, return_type):
+            bad_return_type = type(result)
+            error_string = "{func_name} has return type {expected_type} but is returning value {value} of type {value_type}"
+            error_string = error_string.format(func_name=func_name,
+                                               expected_type=return_type,
+                                               value=result,
+                                               value_type=bad_return_type)
+            raise TypeError(error_string)
+
+        return result
 
     return validate_inner

@@ -68,3 +68,15 @@ def test_that_validate_it_raises_an_exception_when_function_does_not_have_type_a
         add_two(2, 6)
 
     assert exception_info.value.args[0] == 'add_two does not have type annotations'
+
+
+def test_that_validate_it_raise_an_exception_when_there_is_a_return_type_mismatch():
+    @validate_it
+    def add_two(x: int, y: int) -> int:
+        return str(x + y)
+
+    with pytest.raises(TypeError) as exception_info:
+        add_two(4, 5)
+
+    assert exception_info.value.args[
+               0] == "add_two has return type <class 'int'> but is returning value 9 of type <class 'str'>"
