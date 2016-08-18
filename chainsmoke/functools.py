@@ -50,10 +50,8 @@ def reorder(func, reordered_args: tuple):
     """
 
     def inner(*args, **kwargs):
-        new_args = []
-        for arg_num in reordered_args:
-            new_args.append(args[arg_num])
-
-        return func(*tuple(new_args), **kwargs)
+        correct_order = sorted(zip(args, reordered_args), key=lambda x: x[1])
+        correct_args = (arg[0] for arg in correct_order)
+        return func(*correct_args, **kwargs)
 
     return inner
