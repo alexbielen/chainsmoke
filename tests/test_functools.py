@@ -18,7 +18,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 """
 import pytest
 
-from chainsmoke.functools import swap, reorder
+from chainsmoke.functools import swap, reorder, ChainSmokeFunctoolsError
 
 
 def test_that_swap_correctly_swaps_arguments():
@@ -53,6 +53,33 @@ def test_that_reorder_correctly_reorders_arguments():
     reordered_func = reorder(add_two_and_divide, (2, 0, 1))
 
     assert reordered_func(2, 4, 4) == 4
+
+def test_that_reorder_raises_useful_exception_when_passed_incorrect_number_of_args():
+    with pytest.raises(ChainSmokeFunctoolsError) as exception_info:
+        def add_two_and_divide(x, y, z):
+            return (x + y) / z
+
+        reorder(add_two_and_divide, (1, 2, 3, 4))
+
+
+    assert exception_info.value.args[0] == 'functools.reorder received too many args in the reordered_args tuple; ' \
+                                           'make sure the length of the tuple matches the number of positional arguments' \
+                                           ' in add_two_and_divide'
+
+    with pytest.raises(ChainSmokeFunctoolsError) as exception_info:
+        def add_two_and_divide(x, y, z):
+            return (x + y) / z
+
+        reorder(add_two_and_divide, (1, 2))
+
+    assert exception_info.value.args[0] == 'functools.reorder received too few args in the reordered_args tuple; ' \
+                                           'make sure the length of the tuple matches the number of positional arguments' \
+                                           ' in add_two_and_divide'
+
+
+
+
+
 
 
 

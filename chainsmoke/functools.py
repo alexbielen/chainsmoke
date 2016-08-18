@@ -18,6 +18,10 @@ OTHER DEALINGS IN THE SOFTWARE.
 """
 
 
+class ChainSmokeFunctoolsError(Exception):
+    pass
+
+
 def swap(func):
     """
     Swaps the arguments to a function.
@@ -41,15 +45,30 @@ def swap(func):
     return inner
 
 
-def reorder(func, reordered_args: tuple):
+def reorder(func: callable, reordered_args: tuple) -> callable:
     """
     Reorders arguments to a function according to tuple of integers
     :param func: function of n-arity
     :param reordered_args: a tuple of unique integers
     :return: function of n-arity with reordered args
     """
+    name = func.__name__
+    num_positional_args = len(func.__code__.co_varnames)
+
+    if len(reordered_args) > num_positional_args:
+        raise ChainSmokeFunctoolsError(
+            "functools.reorder received too many args in the reordered_args tuple; "
+            "make sure the length of the tuple matches the number of positional arguments in {func_name}".format(
+                func_name=name))
+
+    if len(reordered_args) < num_positional_args:
+        raise ChainSmokeFunctoolsError(
+            "functools.reorder received too few args in the reordered_args tuple; "
+            "make sure the length of the tuple matches the number of positional arguments in {func_name}".format(
+                func_name=name))
 
     def inner(*args, **kwargs):
+
         correct_order = sorted(zip(args, reordered_args), key=lambda x: x[1])
         correct_args = (arg[0] for arg in correct_order)
         return func(*correct_args, **kwargs)
