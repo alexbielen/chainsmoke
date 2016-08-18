@@ -47,4 +47,13 @@ def test_that_swap_raises_useful_exception_when_passed_lambda_with_wrong_number_
 
 
 def test_that_reorder_correctly_reorders_arguments():
-    pass
+    def add_two_and_divide(x, y, z):
+        return (x + y) / z
+
+    reordered_func = reorder(add_two_and_divide, (2, 0, 1))
+
+    assert reordered_func(2, 4, 4) == 4
+
+
+
+
