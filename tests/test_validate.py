@@ -80,3 +80,16 @@ def test_that_validate_it_raise_an_exception_when_there_is_a_return_type_mismatc
 
     assert exception_info.value.args[
                0] == "add_two has return type <class 'int'> but is returning value 9 of type <class 'str'>"
+
+
+def test_that_validate_it_works_on_function_with_inner_varnames():
+    @validate_it
+    def add_two(x: int, y: int) -> int:
+        result = x + y
+        return result
+
+    with pytest.raises(TypeError) as exception_info:
+        add_two(4, '5')
+
+    assert exception_info.value.args[
+               0] == "add_two expects type <class 'int'> for arg y but received value 5 with type of <class 'str'>"

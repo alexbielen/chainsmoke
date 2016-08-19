@@ -16,6 +16,10 @@ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABI
 CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
+import inspect
+from typing import Callable
+
+from chainsmoke.validate import validate_it
 
 
 class ChainSmokeFunctoolsError(Exception):
@@ -45,7 +49,8 @@ def swap(func):
     return inner
 
 
-def reorder(func: callable, reordered_args: tuple) -> callable:
+@validate_it
+def reorder(func: Callable, reordered_args: tuple) -> Callable:
     """
     Reorders arguments to a function according to tuple of integers
     :param func: function of n-arity
@@ -53,7 +58,8 @@ def reorder(func: callable, reordered_args: tuple) -> callable:
     :return: function of n-arity with reordered args
     """
     name = func.__name__
-    num_positional_args = len(func.__code__.co_varnames)
+    args_spec = inspect.getargs(func.__code__)
+    num_positional_args = len(args_spec.args)
 
     if len(reordered_args) > num_positional_args:
         raise ChainSmokeFunctoolsError(

@@ -18,6 +18,8 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
+import inspect
+
 
 class ChainSmokeValidationError(Exception):
     pass
@@ -38,7 +40,8 @@ def validate_it(func):
     try:
         param_names = func.overridden_varnames
     except AttributeError:
-        param_names = func.__code__.co_varnames
+        args_spec = inspect.getargs(func.__code__)
+        param_names = args_spec.args
 
     def validate_inner(*args, **kwargs):
         if not types:
