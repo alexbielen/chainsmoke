@@ -26,7 +26,8 @@ class ChainSmokeFunctoolsError(Exception):
     pass
 
 
-def swap(func):
+@validate_it
+def swap(func: Callable) -> Callable:
     """
     Swaps the arguments to a function.
     :param func: A 2-arity function
