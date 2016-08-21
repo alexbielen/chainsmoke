@@ -19,9 +19,21 @@ OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import inspect
+import typing
 
 
 class ChainSmokeValidationError(Exception):
+    pass
+
+
+def is_instance_of(obj, type_annotation):
+    """
+    Replacement for Python's isinstance. This checks the object's type annotation
+    against types derived from typing.
+    :param obj: any object with type annotations
+    :param type_annotation: any type annotation from Python's typing module
+    :return:
+    """
     pass
 
 
