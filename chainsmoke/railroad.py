@@ -1,6 +1,5 @@
 """
-
-
+Types and utilities for Railroad-oriented programming.
 
 Copyright (C) 2016  Alex Hendrie Bielen
 
@@ -19,7 +18,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 """
 
 
-class _Either(object):
+class Either(object):
     """
     Either allows you to chain computations that have either a Good status or an Error status.
     """
@@ -28,37 +27,88 @@ class _Either(object):
         self.value = value
 
 
-class Good(_Either):
+class Good(Either):
     """
     Use for cases where everything went OK.
     """
     pass
 
 
-class Error(_Either):
+class Error(Either):
     """
     Use for cases where there is an error.
     """
     pass
 
 
-def railroad_it(func):
+class Maybe(object):
     """
-    Creates a railroadable type (Either, Maybe).
-
+    Maybe allows you to chain computations that have result in a Just value or a Nothing
     """
 
-    def check_type_of_either(either):
-        if isinstance(either, Error):
-            return Error(either.value)
+    def __init__(self, value):
+        self.value = value
+
+
+class Just(Maybe):
+    pass
+
+
+class Nothing(Maybe):
+    pass
+
+
+def railroad_it(railroad_type, debug=False):
+    """
+    Creates a railroad-able function; that is a function in which the error handling is abstracted into
+    a computational context either or maybe.
+    :param railroad_type:
+    :param debug:
+    :return:
+    """
+    def decorator(func):
+        exceptions = []
+        if railroad_type == Either:
+            def check_type_of_either(either):
+                if isinstance(either, Error):
+                    return Error(either.value)
+                else:
+                    if not isinstance(either, Good):
+                        value = either
+                    else:
+                        value = either.value
+                    try:
+                        return Good(func(value))
+                    except Exception as e:
+                        if debug:
+                            raise e
+                        else:
+                            return Error(e)
+
+            result = check_type_of_either
+
+        elif railroad_type == Maybe:
+            def check_type_of_maybe(maybe):
+                if isinstance(maybe, Nothing):
+                    return Nothing
+                else:
+                    if not isinstance(maybe, Just):
+                        value = maybe
+                    else:
+                        value = maybe.value
+                    try:
+                        return Just(func(value))
+                    except Exception:
+                        if debug:
+                            func(value)
+                        else:
+                            return Nothing
+
+            result = check_type_of_maybe
+
         else:
-            if not isinstance(either, Good):
-                value = either
-            else:
-                value = either.value
-            try:
-                return Good(func(value))
-            except Exception as e:
-                return Error(e)
+            raise TypeError("{railroad_type} is not a valid railroad type; try Either or Maybe.".format(railroad_type))
 
-    return check_type_of_either
+        return result
+
+    return decorator
