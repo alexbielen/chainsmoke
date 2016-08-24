@@ -232,6 +232,60 @@ result = chain(
     wrap_with=log_it(print)
 )
 ```
+## validate_it
+Chainsmoke provides a decorator nanmed `validate_it` that will do type-level validation of arguments and the return value using Python 3.5's
+type annotations.
+
+```python
+@validate_it
+def add_two_numbers(x: int, y: int) -> int:
+    return x + y
+
+add_two_numbers(2, 'A')
+```
+
+will raise a `TypeError` with the following message:
+`"add_two_numbers expects type <class 'int'> for arg y " but received value A with type of <class 'str'>"`
+
+@validate_it
+def add_two(x: int, y: int) -> int:
+    return str(x + y)
+
+add_two(4, 5)
+
+will raise a `TypeError` with the following message:
+`add_two has return type <class 'int'> but is returning value 9 of type <class 'str'>`
+
+Any function that is passed to validate must have type annotations or an exception will be raised.
+
+##combine
+`combine` allows you to combine Chainsmoke's various decorators in a way that allows them to play nicely together.
+
+```python
+from logging import log
+
+from chainsmoke.chain import combine
+from chainsmoke.log import log_it
+from chainsmoke.validate import validate_it
+
+
+validate_and_log = combine(log_it(log.debug), validate_it)
+
+@validate_and_log
+def add_two(x: int, y: int) -> int:
+    return x + y
+```
+You can pass the decorators in any order that you like and Chainsmoke will figure out the correct order to integrate
+the decorators.
+
+
+
+
+
+
+
+
+
 
 
 
