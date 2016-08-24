@@ -237,6 +237,8 @@ Chainsmoke provides a decorator nanmed `validate_it` that will do type-level val
 type annotations.
 
 ```python
+from chainsmoke.validate import validate_it
+
 @validate_it
 def add_two_numbers(x: int, y: int) -> int:
     return x + y
@@ -247,11 +249,13 @@ add_two_numbers(2, 'A')
 will raise a `TypeError` with the following message:
 `"add_two_numbers expects type <class 'int'> for arg y " but received value A with type of <class 'str'>"`
 
+```python
 @validate_it
 def add_two(x: int, y: int) -> int:
     return str(x + y)
 
 add_two(4, 5)
+```
 
 will raise a `TypeError` with the following message:
 `add_two has return type <class 'int'> but is returning value 9 of type <class 'str'>`
