@@ -18,7 +18,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 """
 import pytest
 
-from chainsmoke.functools import swap, reorder, ChainSmokeFunctoolsError
+from chainsmoke.functools import swap, reorder, retry, ChainSmokeFunctoolsError
 
 
 def test_that_swap_correctly_swaps_arguments():
@@ -75,6 +75,22 @@ def test_that_reorder_raises_useful_exception_when_passed_incorrect_number_of_ar
     assert exception_info.value.args[0] == 'functools.reorder received too few args in the reordered_args tuple; ' \
                                            'make sure the length of the tuple matches the number of positional arguments' \
                                            ' in add_two_and_divide'
+
+
+
+
+def test_that_retry_correctly_retries_a_function_when_encountering_an_exception():
+
+    @retry(pause=1)
+    def raise_exceptions_only():
+        raise ChainSmokeFunctoolsError("Exception prevailed.")
+
+    result = raise_exceptions_only()
+
+    assert isinstance(result, ChainSmokeFunctoolsError)
+    assert result.args == ('Exception prevailed.',)
+
+
 
 
 

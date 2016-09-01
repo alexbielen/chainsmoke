@@ -16,9 +16,11 @@ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABI
 CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
-import inspect
 from typing import Callable
+import inspect
+import time
 
+from chainsmoke.railroad import Either, railroad_it
 from chainsmoke.validate import validate_it
 
 
@@ -74,10 +76,51 @@ def reorder(func: Callable, reordered_args: tuple) -> Callable:
             "make sure the length of the tuple matches the number of positional arguments in {func_name}".format(
                 func_name=name))
 
-    def inner(*args, **kwargs):
+    def reorder_inner(*args, **kwargs):
 
         correct_order = sorted(zip(args, reordered_args), key=lambda x: x[1])
         correct_args = (arg[0] for arg in correct_order)
         return func(*correct_args, **kwargs)
 
-    return inner
+    return reorder_inner
+
+
+def retry(num_retries=3, pause=5, case=(Exception,)):
+    """
+    Retries a function when it fails due to an exception. Good for networking instability.
+    :param func: Any callable
+    :param num_retries: Number of times this function should retry; defaults to 3
+    :param pause: length of time in seconds that this function should pause; defaults to 5 seconds
+    :param case: Exceptions that should be caught and retried; defaults to the base python catch-all Exception
+    :return: a new function that returns a Chainsmoke.Either object with result or error
+    """
+    def retry_decorator(func):
+        def retry_inner(*args, **kwargs):
+            try:
+                result = func(*args, **kwargs)
+            except case as e:
+                retry_count = 0
+                failure = True
+
+                while failure and retry_count <= num_retries:
+                    time.sleep(pause)
+                    try:
+                        result = func(*args, **kwargs)
+                        failure = False
+                    except case as e:
+                        retry_count += 1
+                        result = e
+
+            return result
+
+        return retry_inner
+
+    return retry_decorator
+
+
+
+
+
+
+
+
