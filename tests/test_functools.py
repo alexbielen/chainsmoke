@@ -18,7 +18,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 """
 import pytest
 
-from chainsmoke.functools import swap, reorder, retry, ChainSmokeFunctoolsError
+from chainsmoke.functools import swap, reorder, retry, curry, ChainSmokeFunctoolsError
 
 
 def test_that_swap_correctly_swaps_arguments():
@@ -54,13 +54,13 @@ def test_that_reorder_correctly_reorders_arguments():
 
     assert reordered_func(2, 4, 4) == 4
 
+
 def test_that_reorder_raises_useful_exception_when_passed_incorrect_number_of_args():
     with pytest.raises(ChainSmokeFunctoolsError) as exception_info:
         def add_two_and_divide(x, y, z):
             return (x + y) / z
 
         reorder(add_two_and_divide, (1, 2, 3, 4))
-
 
     assert exception_info.value.args[0] == 'functools.reorder received too many args in the reordered_args tuple; ' \
                                            'make sure the length of the tuple matches the number of positional arguments' \
@@ -77,10 +77,7 @@ def test_that_reorder_raises_useful_exception_when_passed_incorrect_number_of_ar
                                            ' in add_two_and_divide'
 
 
-
-
 def test_that_retry_correctly_retries_a_function_when_encountering_an_exception():
-
     @retry(pause=1)
     def raise_exceptions_only():
         raise ChainSmokeFunctoolsError("Exception prevailed.")
@@ -91,11 +88,43 @@ def test_that_retry_correctly_retries_a_function_when_encountering_an_exception(
     assert result.args == ('Exception prevailed.',)
 
 
+def test_that_retry_correctly_returns_the_value_when_there_is_not_an_error():
+    @retry(pause=1)
+    def add_three_numbers(x, y, z):
+        result = x + y + z
+        return result
+
+    assert add_three_numbers(1, 2, 3) == 6
 
 
+def test_that_curry_correctly_returns_a_curried_function():
+    @curry
+    def add_three_numbers(x, y, z):
+        result = x + y + z
+        return result
 
 
+    add_two_numbers_to_the_number_one = add_three_numbers(1)
+    add_one_number_to_the_number_three = add_three_numbers(1, 2)
 
+    assert add_two_numbers_to_the_number_one(2, 3) == 6
+    assert add_one_number_to_the_number_three(3) == 6
+    assert add_three_numbers(1, 2, 3) == 6
+
+
+def test_that_curry_correctly_works_with_default_arguments():
+    @curry
+    def add_three_numbers_to_default(x, y, z, default=15):
+        result = x + y + z + default
+        return result
+
+    add_two_numbers_to_default = add_three_numbers_to_default(1)
+    add_one_number_to_default = add_three_numbers_to_default(1, 2)
+    add_one_number_to_different_default = add_three_numbers_to_default(1, 2, default=14)
+
+    assert add_one_number_to_default(1) == 19
+    assert add_two_numbers_to_default(1, 2) == 19
+    assert add_one_number_to_different_default(1) == 18
 
 
 

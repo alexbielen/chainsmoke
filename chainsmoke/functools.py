@@ -16,12 +16,14 @@ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABI
 CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
+from functools import partial, reduce
 from typing import Callable
 import inspect
 import time
 
-from chainsmoke.railroad import Either, railroad_it
+from chainsmoke._utils import get_num_positional_args
 from chainsmoke.validate import validate_it
+
 
 
 class ChainSmokeFunctoolsError(Exception):
@@ -84,10 +86,10 @@ def reorder(func: Callable, reordered_args: tuple) -> Callable:
 
     return reorder_inner
 
-
-def retry(num_retries=3, pause=5, case=(Exception,)):
+@validate_it
+def retry(num_retries: int=3, pause: int=5, case: tuple=(Exception,)) -> Callable:
     """
-    Retries a function when it fails due to an exception. Good for networking instability.
+    Retries a function when it fails due to an exception.
     :param func: Any callable
     :param num_retries: Number of times this function should retry; defaults to 3
     :param pause: length of time in seconds that this function should pause; defaults to 5 seconds
@@ -118,9 +120,19 @@ def retry(num_retries=3, pause=5, case=(Exception,)):
     return retry_decorator
 
 
+def curry(func):
+    """
+    Decorator that makes any function curry-able.
+    :param func: Any callable.
+    :return: Curried function.
+    """
+    num_positional_args = get_num_positional_args(func)
 
+    def curry_inner(*args, **kwargs):
+        if len(args) < num_positional_args:
+            return partial(func, *args, **kwargs)
+        else:
+            return func(*args, **kwargs)
 
-
-
-
+    return curry_inner
 
