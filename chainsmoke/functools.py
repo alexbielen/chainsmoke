@@ -104,7 +104,7 @@ def retry(num_retries: int=3, pause: int=5, case: tuple=(Exception,)) -> Callabl
                 retry_count = 0
                 failure = True
 
-                while failure and retry_count <= num_retries:
+                while failure and retry_count < num_retries:
                     time.sleep(pause)
                     try:
                         result = func(*args, **kwargs)

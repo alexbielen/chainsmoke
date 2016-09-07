@@ -97,12 +97,35 @@ def test_that_retry_correctly_returns_the_value_when_there_is_not_an_error():
     assert add_three_numbers(1, 2, 3) == 6
 
 
+def test_that_retry_is_actually_called_three_times():
+    tries = []
+
+    @retry(pause=1)
+    def add_to_tries():
+        tries.append(1)
+        raise Exception
+
+    add_to_tries()
+    assert len(tries) == 4
+
+
+def test_that_the_number_of_retries_is_configurable():
+    tries = []
+
+    @retry(pause=1, num_retries=10)
+    def add_to_tries():
+        tries.append(1)
+        raise Exception
+
+    add_to_tries()
+    assert len(tries) == 11
+
+
 def test_that_curry_correctly_returns_a_curried_function():
     @curry
     def add_three_numbers(x, y, z):
         result = x + y + z
         return result
-
 
     add_two_numbers_to_the_number_one = add_three_numbers(1)
     add_one_number_to_the_number_three = add_three_numbers(1, 2)
@@ -125,7 +148,3 @@ def test_that_curry_correctly_works_with_default_arguments():
     assert add_one_number_to_default(1) == 19
     assert add_two_numbers_to_default(1, 2) == 19
     assert add_one_number_to_different_default(1) == 18
-
-
-
-
