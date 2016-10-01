@@ -20,10 +20,23 @@ OTHER DEALINGS IN THE SOFTWARE.
 """
 
 from collections import namedtuple
+from typing import Any, Callable, Union
+
+Result = namedtuple('Result', ['value', 'path'])
 
 
 class Decision(object):
-    def __init__(self, name, predicate, false_next, true_next):
+    """
+    Represents a binary choice node.
+    """
+
+    def __init__(self, name: str, predicate: Callable[[Any], bool], false_next: DecisionType, true_next: DecisionType):
+        """
+        :param name: Name of the decision
+        :param predicate: A 1-arity function that returns
+        :param false_next:
+        :param true_next:
+        """
         self.name = name
         self.predicate = predicate
         self.false_next = false_next
@@ -43,17 +56,14 @@ class Decision(object):
         return result.next(data, path=path)
 
 
-Result = namedtuple('Result', ['value', 'path'])
-
-
 class Action(object):
-    def __init__(self, name, action):
+    def __init__(self, name: str, action: Callable[[Any], Any]):
         self.name = name
         self.action = action
 
-    def next(self, data, path):
+    def next(self, data: Any, path: str) -> Result:
         result = self.action(data)
         return Result(value=result, path=path + self.name)
 
 
-
+DecisionType = Union[Decision, Action]
