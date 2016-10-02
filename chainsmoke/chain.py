@@ -70,10 +70,10 @@ def compose(*args, **kwargs):
     wrapping_func = kwargs.get('wrap_with')
 
     if wrapping_func:
-        args = tuple(wrap_funcs(wrapping_func, args))
+        args = wrap_funcs(wrapping_func, args)
 
     def compose_inner(value):
-        result = reduce((lambda x, y: y(x)), (value,) + args)
+        result = reduce((lambda x, y: y(x)), [value] + list(args))
         return result
 
     return compose_inner

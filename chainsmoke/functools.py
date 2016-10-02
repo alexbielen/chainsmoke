@@ -16,14 +16,13 @@ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABI
 CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
-from functools import partial, reduce
+from functools import partial
 from typing import Callable
 import inspect
 import time
 
 from chainsmoke._utils import get_num_positional_args
 from chainsmoke.validate import validate_it
-
 
 
 class ChainSmokeFunctoolsError(Exception):
@@ -37,14 +36,10 @@ def swap(func: Callable) -> Callable:
     :param func: A 2-arity function
     :return: A 2-arity function with swapped parameters.
     """
-    num_args = len(func.__code__.co_varnames)
+    num_args = get_num_positional_args(func)
 
     if num_args != 2:
-        try:
-            name = func.__name__
-        except AttributeError:
-            name = 'anonymous function'
-
+        name = func.__name__
         raise AssertionError("swap expects a two argument function; {name} has {len} argument(s)".format(name=name,
                                                                                                          len=num_args))
 
@@ -86,6 +81,7 @@ def reorder(func: Callable, reordered_args: tuple) -> Callable:
 
     return reorder_inner
 
+
 @validate_it
 def retry(num_retries: int=3, pause: int=5, case: tuple=(Exception,)) -> Callable:
     """
@@ -96,6 +92,7 @@ def retry(num_retries: int=3, pause: int=5, case: tuple=(Exception,)) -> Callabl
     :param case: Exceptions that should be caught and retried; defaults to the base python catch-all Exception
     :return: a new function that returns a Chainsmoke.Either object with result or error
     """
+
     def retry_decorator(func):
         def retry_inner(*args, **kwargs):
             try:
@@ -135,4 +132,3 @@ def curry(func):
             return func(*args, **kwargs)
 
     return curry_inner
-

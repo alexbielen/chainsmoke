@@ -78,7 +78,7 @@ def test_that_reorder_raises_useful_exception_when_passed_incorrect_number_of_ar
 
 
 def test_that_retry_correctly_retries_a_function_when_encountering_an_exception():
-    @retry(pause=1)
+    @retry(pause=0)
     def raise_exceptions_only():
         raise ChainSmokeFunctoolsError("Exception prevailed.")
 
@@ -89,7 +89,7 @@ def test_that_retry_correctly_retries_a_function_when_encountering_an_exception(
 
 
 def test_that_retry_correctly_returns_the_value_when_there_is_not_an_error():
-    @retry(pause=1)
+    @retry(pause=0)
     def add_three_numbers(x, y, z):
         result = x + y + z
         return result
@@ -97,10 +97,24 @@ def test_that_retry_correctly_returns_the_value_when_there_is_not_an_error():
     assert add_three_numbers(1, 2, 3) == 6
 
 
+def test_that_retry_correctly_returns_the_value_when_there_are_still_retries():
+    @retry(pause=0)
+    def fail_then_succeed(l):
+
+        if len(l) < 2:
+            l.append(1)
+            raise Exception("Testing")
+        else:
+            return l
+
+    empty = []
+    assert fail_then_succeed(empty) == [1, 1]
+
+
 def test_that_retry_is_actually_called_three_times():
     tries = []
 
-    @retry(pause=1)
+    @retry(pause=0)
     def add_to_tries():
         tries.append(1)
         raise Exception
@@ -112,7 +126,7 @@ def test_that_retry_is_actually_called_three_times():
 def test_that_the_number_of_retries_is_configurable():
     tries = []
 
-    @retry(pause=1, num_retries=1)
+    @retry(pause=0, num_retries=1)
     def add_to_tries():
         tries.append(1)
         raise Exception
