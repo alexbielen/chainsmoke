@@ -16,9 +16,9 @@ class PyTest(TestCommand):
 
 
 setup(name='chainsmoke',
-      version='0.1',
+      version='0.0.1',
       description='A collection of tools for chains of functions. Strives to be simple, practical and well-documented.',
-      url='https://github.com/bielenah/chainsmoke',
+      url='https://github.com/alexbielen/chainsmoke',
       author='Alex Bielen',
       author_email='alexhendriebielen@gmail.com',
       license='MIT',
