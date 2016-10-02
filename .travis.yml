@@ -7,6 +7,6 @@ install:
   - pip install pytest==2.9.2 pytest-cov
   - pip install coveralls
 script:
-  - py.test --cov=chainsmoke tests/
+  - py.test --cov-config .coveragerc --cov tests/
 after_success:
   - coveralls
