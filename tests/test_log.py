@@ -90,3 +90,24 @@ def test_that_when_log_it_is_applied_it_returns_the_correct_value():
     )
 
     assert result == 14
+
+
+def test_that_internal_log_decorator_can_accept_an_arbitary_name_for_a_function():
+    """
+    This is a test for an internal only API
+    """
+    mock_logger = MagicMock()
+    dec = log_it(mock_logger)
+
+    def will_not_use_this_name(x: int, y: int) -> int:
+        return x + y
+
+    interal_decorator = dec(will_not_use_this_name, __name="arbitrary_func_name")
+    interal_decorator(1, 2)
+
+    mock_logger.assert_has_calls(
+        [
+            call('arbitrary_func_name called with args: (1, 2) and kwargs {}'),
+            call('arbitrary_func_name returned result 3')
+        ]
+    )

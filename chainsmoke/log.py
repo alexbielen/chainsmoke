@@ -17,7 +17,7 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
-def log_it(logger, input_string=None, output_string=None):
+def log_it(logger=print, input_string=None, output_string=None):
     """
     Wraps a function in a logger.
 
@@ -27,7 +27,7 @@ def log_it(logger, input_string=None, output_string=None):
     :param output_string: An optional interpolated stirng for logging the output; needs to have {func_name} and
                           {result} in the string.
     """
-    def log_it_decorator(function=print, __name=None):
+    def log_it_decorator(function, __name=None):
         def inner(*args, **kwargs):
             if input_string:
                 input_log_string = input_string
@@ -48,7 +48,7 @@ def log_it(logger, input_string=None, output_string=None):
             else:
                 function_name = __name
 
-            logger(input_log_string.format( func_name=function_name, args=args, kwargs=kwargs))
+            logger(input_log_string.format(func_name=function_name, args=args, kwargs=kwargs))
             result = function(*args, **kwargs)
             logger(output_log_string.format(func_name=function_name, result=result))
             return result
