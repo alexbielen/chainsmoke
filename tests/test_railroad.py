@@ -16,14 +16,25 @@ OTHER DEALINGS IN THE SOFTWARE.
 """
 import pytest
 
-from chainsmoke.railroad import railroad_it, Maybe, Either, Error, Good
+from chainsmoke.railroad import railroad_it, Maybe, Either, Error, Just, Nothing
 from chainsmoke.chain import chain, compose
 
 eitherable = railroad_it(Either)
+maybeable = railroad_it(Maybe)
+eitherable_debug = railroad_it(Either, debug=True)
+maybeable_debug = railroad_it(Maybe, debug=True)
 
 
 class ChainSmokeSpecialTestError(Exception):
     pass
+
+
+class NonValidRailroadType(object):
+    pass
+
+
+def function_that_raises_an_exception():
+    raise ChainSmokeSpecialTestError("This magical function raised an exception.")
 
 
 @eitherable
@@ -47,7 +58,20 @@ def function_that_calls_a_function_that_raises_exception(either):
     return either + result
 
 
-eitherable_debug = railroad_it(Either, debug=True)
+@maybeable
+def add_2_to_maybe(maybe):
+    return maybe + 2
+
+
+@maybeable
+def add_3_to_maybe(maybe):
+    return maybe + 3
+
+
+@maybeable
+def function_that_calls_a_function_that_raises_exception_maybe(maybe):
+    result = function_that_raises_an_exception()
+    return maybe + result
 
 
 @eitherable_debug
@@ -59,18 +83,37 @@ def debug_add2(either):
 def debug_add3(either):
     return either + 3
 
+
 @eitherable_debug
 def debug_call_exception_function(either):
     result = function_that_raises_an_exception()
     return either + result
+
 
 @eitherable_debug
 def debug_add4(either):
     return either + 4
 
 
-def function_that_raises_an_exception():
-    raise ChainSmokeSpecialTestError("This magical function raised an exception.")
+@maybeable_debug
+def maybe_debug_add2(maybe):
+    return maybe + 2
+
+
+@maybeable_debug
+def maybe_debug_add3(maybe):
+    return maybe + 3
+
+
+@maybeable_debug
+def maybe_debug_call_exception_function(maybe):
+    result = function_that_raises_an_exception()
+    return maybe + result
+
+
+@maybeable_debug
+def maybe_debug_add4(maybe):
+    return maybe + 4
 
 
 def test_that_call_chain_returns_15_when_value_is_good():
@@ -104,7 +147,29 @@ def test_that_call_chain_returns_an_error_when_calling_exception_raising_functio
     assert isinstance(result, Error)
 
 
-def test_that_debug_mode_works():
+def test_that_call_returns_a_just_when_value_is_good():
+    func_chain = [
+        3,
+        add_2_to_maybe,
+        add_3_to_maybe
+    ]
+    result = chain(*func_chain)
+    assert isinstance(result, Just)
+    assert result.value == 8
+
+
+def test_that_call_returns_a_nothing_value_is_bad():
+    func_chain = [
+        3,
+        add_2_to_maybe,
+        function_that_calls_a_function_that_raises_exception_maybe,
+        add_3_to_maybe
+    ]
+    result = chain(*func_chain)
+    assert isinstance(result, Nothing)
+
+
+def test_that_debug_mode_works_with_either():
     with pytest.raises(ChainSmokeSpecialTestError) as exception_info:
         func_chain = [
             debug_add2(2),
@@ -117,3 +182,21 @@ def test_that_debug_mode_works():
     assert exception_info.value.args[0] == 'This magical function raised an exception.'
 
 
+def test_that_debug_mode_works_with_maybe():
+    with pytest.raises(ChainSmokeSpecialTestError) as exception_info:
+        func_chain = [
+            maybe_debug_add2(2),
+            maybe_debug_add3,
+            maybe_debug_call_exception_function,
+            maybe_debug_add4
+        ]
+        chain(*func_chain)
+
+    assert exception_info.value.args[0] == 'This magical function raised an exception.'
+
+
+def test_that_exception_is_raised_when_incorrect_type_is_passed_to_railroad():
+    with pytest.raises(TypeError) as exception_info:
+        railroad_it(NonValidRailroadType)
+
+    assert exception_info.value.args[0] == 'NonValidRailroadType is not a valid railroad type; try Either or Maybe.'

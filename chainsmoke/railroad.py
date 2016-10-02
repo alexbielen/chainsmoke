@@ -54,20 +54,23 @@ class Just(Maybe):
     pass
 
 
-class Nothing(Maybe):
+class Nothing(object):
     pass
 
 
 def railroad_it(railroad_type, debug=False):
     """
     Creates a railroad-able function; that is a function in which the error handling is abstracted into
-    a computational context either or maybe.
+    a computational context e.g, Either or Maybe.
     :param railroad_type:
     :param debug:
     :return:
     """
+    if railroad_type != Maybe and railroad_type != Either:
+        raise TypeError('{type} is not a valid railroad type; try Either or Maybe.'.format(type=railroad_type.__name__))
+
     def decorator(func):
-        exceptions = []
+
         if railroad_type == Either:
             def check_type_of_either(either):
                 if isinstance(either, Error):
@@ -81,16 +84,16 @@ def railroad_it(railroad_type, debug=False):
                         return Good(func(value))
                     except Exception as e:
                         if debug:
-                            raise e
+                            func(value)
                         else:
                             return Error(e)
 
             result = check_type_of_either
 
-        elif railroad_type == Maybe:
+        else:
             def check_type_of_maybe(maybe):
                 if isinstance(maybe, Nothing):
-                    return Nothing
+                    return Nothing()
                 else:
                     if not isinstance(maybe, Just):
                         value = maybe
@@ -102,12 +105,9 @@ def railroad_it(railroad_type, debug=False):
                         if debug:
                             func(value)
                         else:
-                            return Nothing
+                            return Nothing()
 
             result = check_type_of_maybe
-
-        else:
-            raise TypeError("{railroad_type} is not a valid railroad type; try Either or Maybe.".format(railroad_type))
 
         return result
 

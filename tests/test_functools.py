@@ -112,13 +112,13 @@ def test_that_retry_is_actually_called_three_times():
 def test_that_the_number_of_retries_is_configurable():
     tries = []
 
-    @retry(pause=1, num_retries=10)
+    @retry(pause=1, num_retries=1)
     def add_to_tries():
         tries.append(1)
         raise Exception
 
     add_to_tries()
-    assert len(tries) == 11
+    assert len(tries) == 2
 
 
 def test_that_curry_correctly_returns_a_curried_function():
