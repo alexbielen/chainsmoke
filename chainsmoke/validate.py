@@ -26,17 +26,6 @@ class ChainSmokeValidationError(Exception):
     pass
 
 
-def is_instance_of(obj, type_annotation):
-    """
-    Replacement for Python's isinstance. This checks the object's type annotation
-    against types derived from python's typing module.
-    :param obj: any object with type annotations
-    :param type_annotation: any type annotation from Python's typing module
-    :return:
-    """
-    pass
-
-
 def validate_it(func):
     """
     Validate that the parameters have the correct types according to the type annotations.
