@@ -2,6 +2,7 @@
 [![Build Status](https://travis-ci.org/alexbielen/chainsmoke.svg?branch=master)](https://travis-ci.org/alexbielen/chainsmoke)
 [![Coverage Status](https://coveralls.io/repos/github/alexbielen/chainsmoke/badge.svg?branch=master)](https://coveralls.io/github/alexbielen/chainsmoke?branch=master)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)]()
+
 Chainsmoke is a collection of tools for chains of functions. It strives to be simple, practical and well-documented.
 
 
